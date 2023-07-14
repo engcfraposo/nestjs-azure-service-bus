@@ -12,7 +12,7 @@ jobs:
           node-version: '18'
           registry-url: 'https://registry.npmjs.org'
       - run: npm install
-      - run: npm run test:cov
+      - run: npm run test:cov --coverageReporters json-summary
       - uses: actions/upload-artifact@v2
         with:
           name: coverage
@@ -33,7 +33,7 @@ jobs:
         uses: MishaKav/jest-coverage-comment@main
         with:
           hide-comment: true
-          coverage-summary-path: ./coverage-final.json
+          coverage-summary-path: ./coverage-summary.json
 
       - name: Check the output coverage
         run: |
