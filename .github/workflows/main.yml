@@ -20,20 +20,6 @@ jobs:
         with:
           name: build-npm
           path: dist/*
-  build-yarn:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-          registry-url: 'https://registry.npmjs.org'
-      - run: yarn install --immutable
-      - run: yarn build
-      - uses: actions/upload-artifact@v2
-        with:
-          name: build-yarn
-          path: dist/*
           
   publish-npm:
     needs: build-npm
@@ -51,18 +37,3 @@ jobs:
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-  publish-yarn:
-    needs: build-yarn
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-          registry-url: 'https://registry.npmjs.org'
-      - uses: actions/download-artifact@v2
-        with:
-          name: build-yarn
-      - run: npm version --new-version ${GITHUB_REF#refs/tags/v} --no-git-tag-version
-      - run: yarn publish
- 
