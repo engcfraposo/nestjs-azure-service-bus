@@ -12,7 +12,7 @@ jobs:
           node-version: '18'
           registry-url: 'https://registry.npmjs.org'
       - run: npm install
-      - run: npm run test:cov --coverageReporters json-summary
+      - run: npx jest --coverage --coverageReporters json-summary
       - uses: actions/upload-artifact@v2
         with:
           name: coverage
