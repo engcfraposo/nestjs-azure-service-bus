@@ -6,11 +6,11 @@ on:
       - 'v*'
 
 jobs:
-  build:
+  build-npm:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
@@ -18,38 +18,53 @@ jobs:
       - run: npm run build
       - uses: actions/upload-artifact@v2
         with:
-          name: build
+          name: build-npm
+          path: dist/*
+  build-yarn:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+      - run: yarn install --immutable
+      - run: yarn build
+      - uses: actions/upload-artifact@v2
+        with:
+          name: build-yarn
           path: dist/*
           
   publish-npm:
-    needs: build
+    needs: build-npm
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
       - uses: actions/download-artifact@v2
         with:
-          name: build
+          name: build-npm
       - run: npm version --new-version ${GITHUB_REF#refs/tags/v} --no-git-tag-version
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
   publish-yarn:
-    needs: build
+    needs: build-yarn
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
       - uses: actions/download-artifact@v2
         with:
-          name: build
-      - run: yarn version --new-version ${GITHUB_REF#refs/tags/v} --no-git-tag-version
-      - run: yarn publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          name: build-yarn
+      - run: npm version --new-version ${GITHUB_REF#refs/tags/v} --no-git-tag-version
+      - uses: simenandre/publish-with-yarn@v1
+        with:
+          npm-auth-token: ${{ secrets.NPM_TOKEN }}
+ 
