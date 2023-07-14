@@ -8,7 +8,7 @@
   "author": "engcfraposo",
   "license": "MIT",
   "scripts": {
-    "build": "rimraf dist && tsc",
+    "build": "tsc",
     "format": "prettier --write \"src/**/*.ts\"",
     "prepublish": "npm run build",
     "lint": "eslint \"{src,apps,libs}/**/*.ts\" --fix",
