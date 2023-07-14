@@ -3,7 +3,7 @@ on:
   push:
 
 jobs:
-  build-npm:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -19,6 +19,7 @@ jobs:
           path: coverage/*
 
   update-coverage-in-readme:
+    needs: test
     name: Update Coverage in README
     runs-on: ubuntu-latest
     steps:
