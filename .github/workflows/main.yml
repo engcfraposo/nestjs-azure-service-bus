@@ -37,3 +37,19 @@ jobs:
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+  publish-yarn:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+      - uses: actions/download-artifact@v2
+        with:
+          name: build
+      - run: yarn version --new-version ${GITHUB_REF#refs/tags/v} --no-git-tag-version
+      - run: yarn publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
