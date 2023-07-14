@@ -6,7 +6,6 @@
   "types": "dist/index.d.ts",
   "description": "A dynamic module for NestJS that provides integration with Azure Service Bus.",
   "author": "engcfraposo",
-  "private": true,
   "license": "MIT",
   "scripts": {
     "build": "rimraf dist && tsc",
