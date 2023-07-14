@@ -28,6 +28,7 @@ jobs:
         with:
           node-version: '18'
           registry-url: 'https://registry.npmjs.org'
+      - run: npm install -g rimraf
       - run: yarn install --immutable
       - run: yarn build
       - uses: actions/upload-artifact@v2
