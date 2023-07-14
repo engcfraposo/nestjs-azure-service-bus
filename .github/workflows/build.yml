@@ -3,7 +3,7 @@ on:
   push:
 
 jobs:
-build-npm:
+  build-npm:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -16,16 +16,20 @@ build-npm:
         with:
           name: coverage
           path: coverage/*
+
   update-coverage-in-readme:
     name: Update Coverage in README
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - uses: actions/download-artifact@v2
+        with:
+          name: coverage
       - name: Jest Coverage Comment
         id: coverageComment
         uses: MishaKav/jest-coverage-comment@main
         with:
-          name: coverage
           hide-comment: true
           coverage-summary-path: ./coverage-final.json
 
