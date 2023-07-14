@@ -1,7 +1,7 @@
 # NestJS Azure Service Bus
 
 [![npm version](https://img.shields.io/npm/v/nestjs-azure-service-bus.svg)](https://www.npmjs.com/package/nestjs-azure-service-bus)
-[![license](https://img.shields.io/npm/l/nestjs-azure-service-bus.svg)](https://github.com/engcfraposo/nestjs-azure-service-bus/blob/main/LICENSE)
+[![license](https://img.shields.io/npm/l/nestjs-azure-service-bus.svg)](https://github.com/engcfraposo/nestjs-azure-service-bus/LICENSE)
 
 A dynamic module for NestJS that provides integration with Azure Service Bus.
 
