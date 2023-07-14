@@ -11,6 +11,7 @@ jobs:
         with:
           node-version: '18'
           registry-url: 'https://registry.npmjs.org'
+      - run: npm install
       - run: npm run test:cov
       - uses: actions/upload-artifact@v2
         with:
