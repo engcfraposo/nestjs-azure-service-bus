@@ -1,73 +1,101 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# NestJS Azure Service Bus
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+[![npm version](https://img.shields.io/npm/v/nestjs-azure-service-bus.svg)](https://www.npmjs.com/package/nestjs-azure-service-bus)
+[![license](https://img.shields.io/npm/l/nestjs-azure-service-bus.svg)](https://github.com/engcfraposo/nestjs-azure-service-bus/blob/main/LICENSE)
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+A dynamic module for NestJS that provides integration with Azure Service Bus.
 
 ## Installation
 
 ```bash
-$ npm install
+npm install nestjs-azure-service-bus
 ```
 
-## Running the app
+## Description
 
-```bash
-# development
-$ npm run start
+The NestJS Azure Service Bus package allows you to easily integrate Azure Service Bus into your NestJS applications. It provides decorators for injecting Azure Service Bus senders and receivers, as well as a dynamic module for configuring the Azure Service Bus client.
 
-# watch mode
-$ npm run start:dev
+## Usage
 
-# production mode
-$ npm run start:prod
+### Importing the module
+
+To use the Azure Service Bus module, import it into your NestJS application's root module:
+
+```typescript
+import { Module } from '@nestjs/common';
+import { AzureServiceBusModule } from 'nestjs-azure-service-bus';
+
+@Module({
+  imports: [
+    AzureServiceBusModule.forRoot({
+      connectionString: '<your-connection-string>',
+    }),
+  ],
+})
+export class AppModule {}
 ```
 
-## Test
+Replace `<your-connection-string>` with your Azure Service Bus connection string.
 
-```bash
-# unit tests
-$ npm run test
+### Injecting Senders and Receivers
 
-# e2e tests
-$ npm run test:e2e
+You can use the `Sender` and `Receiver` decorators provided by the module to inject Azure Service Bus senders and receivers into your classes:
 
-# test coverage
-$ npm run test:cov
+```typescript
+import { Injectable } from '@nestjs/common';
+import { Sender, Receiver } from 'nestjs-azure-service-bus';
+
+@Injectable()
+export class MyService {
+  constructor(
+    @Sender('my-queue') private readonly sender: ServiceBusSender,
+    @Receiver('my-queue') private readonly receiver: ServiceBusReceiver,
+  ) {}
+  
+  // Use the sender and receiver in your methods
+}
 ```
+
+Replace `'my-queue'` with the name of your Azure Service Bus queue.
+
+### Configuration Options
+
+The `forRoot` method of the `AzureServiceBusModule` accepts a configuration object with two possible options:
+
+- `connectionString`: The connection string for your Azure Service Bus namespace.
+- `fullyQualifiedNamespace`: The fully qualified namespace of your Azure Service Bus namespace.
+
+You can provide either the `connectionString` or the `fullyQualifiedNamespace`, but not both.
+
+### Dynamic Module Options
+
+The `forFeature` method of the `AzureServiceBusModule` allows you to configure senders and receivers dynamically. It accepts an options object with two properties:
+
+- `senders`: An array of sender names.
+- `receivers`: An array of receiver names.
+
+```typescript
+import { Module } from '@nestjs/common';
+import { AzureServiceBusModule } from 'nestjs-azure-service-bus';
+
+@Module({
+  imports: [
+    AzureServiceBusModule.forFeature({
+      senders: ['sender1', 'sender2'],
+      receivers: ['receiver1', 'receiver2'],
+    }),
+  ],
+})
+export class MyModule {}
+```
+
+This will create senders and receivers for the specified queues.
 
 ## Support
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- For issues or feature requests, please open an [issue](https://github.com/engcfraposo/nestjs-azure-service-bus/issues).
+- For contributions, please refer to the [contribution guide](https://github.com/engcfraposo/nestjs-azure-service-bus/blob/main/CONTRIBUTING.md).
 
 ## License
 
-Nest is [MIT licensed](LICENSE).
+This package is [MIT licensed](https://github.com/engcfraposo/nestjs-azure-service-bus/blob/main/LICENSE).
