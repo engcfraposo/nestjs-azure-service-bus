@@ -64,7 +64,5 @@ jobs:
         with:
           name: build-yarn
       - run: npm version --new-version ${GITHUB_REF#refs/tags/v} --no-git-tag-version
-      - uses: simenandre/publish-with-yarn@v1
-        with:
-          npm-auth-token: ${{ secrets.NPM_TOKEN }}
+      - run: yarn publish
  
