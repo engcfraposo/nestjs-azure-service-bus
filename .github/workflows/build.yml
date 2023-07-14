@@ -1,0 +1,54 @@
+name: Update Coverage in README
+on:
+  push:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          registry-url: 'https://registry.npmjs.org'
+      - run: npm install
+      - run: npx jest --coverage --coverageReporters json-summary
+      - uses: actions/upload-artifact@v2
+        with:
+          name: coverage
+          path: coverage/*
+
+  update-coverage-in-readme:
+    needs: test
+    name: Update Coverage in README
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - uses: actions/download-artifact@v2
+        with:
+          name: coverage
+      - name: Jest Coverage Comment
+        id: coverageComment
+        uses: MishaKav/jest-coverage-comment@main
+        with:
+          hide-comment: true
+          coverage-summary-path: ./coverage-summary.json
+
+      - name: Check the output coverage
+        run: |
+          echo "Coverage Percentage - ${{ steps.coverageComment.outputs.coverage }}"
+          echo "Coverage Color - ${{ steps.coverageComment.outputs.color }}"
+          echo "Summary HTML - ${{ steps.coverageComment.outputs.summaryHtml }}"
+
+      - name: Create the badge
+        if: github.ref == 'refs/heads/main'
+        uses: schneegans/dynamic-badges-action@v1.6.0
+        with:
+          auth: ${{ secrets.JEST_COVERAGE_COMMENT }}
+          gistID: 5e90d640f8c212ab7bbac38f72323f80
+          filename: jest-coverage-comment__main.json
+          label: Coverage
+          message: ${{ steps.coverageComment.outputs.coverage }}%
+          color: ${{ steps.coverageComment.outputs.color }}
+          namedLogo: javascript

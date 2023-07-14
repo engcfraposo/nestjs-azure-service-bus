@@ -2,6 +2,7 @@
 
 [![npm version](https://img.shields.io/npm/v/nestjs-azure-service-bus.svg)](https://www.npmjs.com/package/nestjs-azure-service-bus)
 [![license](https://img.shields.io/npm/l/nestjs-azure-service-bus.svg)](https://github.com/engcfraposo/nestjs-azure-service-bus/blob/08d728f7e13b1efc51bd05c34e7d550b4cef23fb/LICENSE)
+[![coverage](https://img.shields.io/badge/Coverage-100%25-brightgreen.svg)](https://github.com/engcfraposo/nestjs-azure-service-bus/blob/8e7abef3ab8c7df28c9ad9a8483ae7f52a4233fb/README.md) | 100% (39/39) | 83.33% (10/12) | 100% (15/15) |
 
 A dynamic module for NestJS that provides integration with Azure Service Bus.
 
