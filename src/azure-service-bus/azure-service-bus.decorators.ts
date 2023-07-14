@@ -1,5 +1,4 @@
 // sender.decorator.ts
-
 import { Inject } from '@nestjs/common';
 
 export const Sender = (queue: string) =>
