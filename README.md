@@ -81,15 +81,79 @@ import { AzureServiceBusModule } from 'nestjs-azure-service-bus';
 @Module({
   imports: [
     AzureServiceBusModule.forFeature({
-      senders: ['sender1', 'sender2'],
-      receivers: ['receiver1', 'receiver2'],
+      senders: ['queue-example'],
+      receivers: ['queue-example'],
     }),
   ],
 })
-export class MyModule {}
+export class QueueModule {}
 ```
 
 This will create senders and receivers for the specified queues.
+
+```typescript
+import { ServiceBusSender } from '@azure/service-bus';
+import { Injectable } from '@nestjs/common';
+import { Sender } from 'nestjs-azure-service-bus';
+
+@Injectable()
+export class QueueSenderService {
+  constructor(
+    @Sender('test-queue') private readonly sender: ServiceBusSender,
+  ) {}
+  async sendMessage(body: string) {
+    await this.sender.sendMessages({ body });
+  }
+}
+```
+
+```typescript
+import { ServiceBusReceiver } from '@azure/service-bus';
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Receiver } from 'nestjs-azure-service-bus';
+
+@Injectable()
+export class QueueReceiverService implements OnModuleInit {
+  constructor(
+    @Receiver('test-queue') private readonly receiver: ServiceBusReceiver,
+  ) {}
+  onModuleInit() {
+    this.receiver.subscribe({
+      processMessage: async (message) => {
+        console.log(`message.body: ${message.body}`);
+      },
+      processError: async (args) => {
+        console.log(
+          `Error occurred with ${args.entityPath} within ${args.fullyQualifiedNamespace}: `,
+          args.error,
+        );
+      },
+    });
+  }
+}
+```
+
+```typescript
+import { Module } from '@nestjs/common';
+import { QueueSenderService } from './queue-sender.service';
+import { AzureServiceBusModule } from 'nestjs-azure-service-bus';
+import { QueueReceiverService } from './queue-receiver.service';
+
+@Module({
+  imports: [
+    AzureServiceBusModule.forFeature({
+      receivers: ['test-queue'],
+      senders: ['test-queue'],
+    }),
+  ],
+  providers: [QueueSenderService, QueueReceiverService],
+  exports: [QueueSenderService],
+})
+export class QueueModule {}
+
+```
+
+for another method the `ServiceBusReceiver` and `ServiceBusSender` see the [azure sdk](https://www.npmjs.com/package/@azure/service-bus)
 
 ## Support
 
