@@ -65,5 +65,4 @@ jobs:
           name: build-yarn
       - run: npm version --new-version ${GITHUB_REF#refs/tags/v} --no-git-tag-version
       - run: yarn publish
-       env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+ 
