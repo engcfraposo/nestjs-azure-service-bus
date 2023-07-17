@@ -2,6 +2,7 @@
 import { DynamicModule, Module, Provider, Global } from '@nestjs/common';
 import { ServiceBusClient } from '@azure/service-bus';
 import { DefaultAzureCredential } from '@azure/identity';
+import { ConfigService } from '@nestjs/config';
 
 export type AzureSBOptions =
   | { connectionString: string }
@@ -42,13 +43,18 @@ export class AzureServiceBusModule {
   }
 
   static forRootAsync(options: {
-    useFactory: (...args: any[]) => Promise<AzureSBOptions> | AzureSBOptions;
+    imports?: any[];
+    useFactory: (
+      configService: ConfigService,
+    ) => Promise<AzureSBOptions> | AzureSBOptions;
     inject?: any[];
   }): DynamicModule {
     const clientProvider: Provider = {
       provide: 'AZURE_SERVICE_BUS_CONNECTION',
-      useFactory: async (...args: any[]): Promise<ServiceBusClient> => {
-        const clientOptions = await options.useFactory(...args);
+      useFactory: async (
+        configService: ConfigService,
+      ): Promise<ServiceBusClient> => {
+        const clientOptions = await options.useFactory(configService);
 
         if ('connectionString' in clientOptions) {
           return new ServiceBusClient(clientOptions.connectionString);
@@ -65,10 +71,12 @@ export class AzureServiceBusModule {
 
     return {
       module: AzureServiceBusModule,
+      imports: options.imports || [],
       providers: [clientProvider],
       exports: [clientProvider],
     };
   }
+
   static forFeature(options: AzureSBSenderReceiverOptions): DynamicModule {
     const senderProviders =
       options.senders?.map((queue) => ({
@@ -92,8 +100,9 @@ export class AzureServiceBusModule {
   }
 
   static forFeatureAsync(options: {
+    imports?: any[];
     useFactory: (
-      ...args: any[]
+      configService: ConfigService,
     ) => Promise<AzureSBSenderReceiverOptions> | AzureSBSenderReceiverOptions;
     inject?: any[];
   }): DynamicModule {
@@ -123,6 +132,7 @@ export class AzureServiceBusModule {
 
     return {
       module: AzureServiceBusModule,
+      imports: options.imports || [],
       providers: [optionsProvider, senderProviders, receiverProviders],
       exports: [senderProviders, receiverProviders],
     };
