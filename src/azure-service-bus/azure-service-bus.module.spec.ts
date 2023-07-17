@@ -112,23 +112,27 @@ describe('AzureServiceBusModule', () => {
     expect(receiver2).toBeDefined();
   });
 
-  it('should register sender and receiver providers correctly using async', async () => {
+  it('should create ServiceBusClient senders and receivers with the correct queues using async', async () => {
     const optionsRoot: AzureSBOptions = {
       connectionString: 'fake-connection-string',
     };
 
+    const senders = ['sender1', 'sender2'];
+    const receivers = ['receiver1', 'receiver2'];
     const optionsFactory = jest.fn().mockResolvedValue({
-      senders: ['sender1', 'sender2'],
-      receivers: ['receiver1', 'receiver2'],
+      senders,
+      receivers,
     });
 
-    // After you import ServiceBusClient...
-    ServiceBusClient.prototype.createSender = jest
-      .fn()
-      .mockImplementation((queue) => `Mock sender for ${queue}`);
-    ServiceBusClient.prototype.createReceiver = jest
-      .fn()
-      .mockImplementation((queue) => `Mock receiver for ${queue}`);
+    // Mock the ServiceBusClient's createSender and createReceiver methods
+    const createSenderMock = jest.fn();
+    const createReceiverMock = jest.fn();
+    jest
+      .spyOn(ServiceBusClient.prototype, 'createSender')
+      .mockImplementation(createSenderMock);
+    jest
+      .spyOn(ServiceBusClient.prototype, 'createReceiver')
+      .mockImplementation(createReceiverMock);
 
     const moduleRef = await Test.createTestingModule({
       imports: [
@@ -137,15 +141,22 @@ describe('AzureServiceBusModule', () => {
       ],
     }).compile();
 
-    const sender1 = moduleRef.get('AZURE_SB_SENDERS')[0];
-    const sender2 = moduleRef.get('AZURE_SB_SENDERS')[1];
-    const receiver1 = moduleRef.get('AZURE_SB_RECEIVERS')[0];
-    const receiver2 = moduleRef.get('AZURE_SB_RECEIVERS')[1];
+    const sendersProvider = moduleRef.get('AZURE_SB_SENDERS');
+    const receiversProvider = moduleRef.get('AZURE_SB_RECEIVERS');
 
-    expect(sender1).toBeDefined();
-    expect(sender2).toBeDefined();
-    expect(receiver1).toBeDefined();
-    expect(receiver2).toBeDefined();
+    expect(sendersProvider).toBeDefined();
+    expect(receiversProvider).toBeDefined();
+
+    expect(createSenderMock).toHaveBeenCalledTimes(senders.length);
+    senders.forEach((sender) => {
+      expect(createSenderMock).toHaveBeenCalledWith(sender);
+    });
+
+    expect(createReceiverMock).toHaveBeenCalledTimes(receivers.length);
+    receivers.forEach((receiver) => {
+      expect(createReceiverMock).toHaveBeenCalledWith(receiver);
+    });
+
     expect(optionsFactory).toHaveBeenCalled();
   });
 
