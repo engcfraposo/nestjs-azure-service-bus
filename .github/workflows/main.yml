@@ -9,6 +9,10 @@ jobs:
   build-npm:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/upload-artifact@v2
+        with:
+          name: my-artifact
+          path: .
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
