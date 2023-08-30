@@ -1,9 +1,9 @@
 {
   "name": "nestjs-azure-service-bus",
-  "version": "0.0.1",
+  "version": "0.0.15",
   "homepage": "https://github.com/engcfraposo/nestjs-azure-service-bus",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "index.js",
+  "types": "index.d.ts",
   "description": "A dynamic module for NestJS that provides integration with Azure Service Bus.",
   "author": "engcfraposo",
   "license": "MIT",
