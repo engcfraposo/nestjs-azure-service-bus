@@ -1,6 +1,6 @@
 {
   "name": "nestjs-azure-service-bus",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "homepage": "https://github.com/engcfraposo/nestjs-azure-service-bus",
   "main": "index.js",
   "types": "index.d.ts",
@@ -18,8 +18,8 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"
   },
   "dependencies": {
-    "@azure/identity": "^3.2.3",
-    "@azure/service-bus": "^7.9.0",
+    "@azure/identity": "^3.3.0",
+    "@azure/service-bus": "^7.9.1",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.0.0",
     "@nestjs/core": "^10.0.0",
