@@ -2,7 +2,7 @@
 
 [![npm version](https://img.shields.io/npm/v/nestjs-azure-service-bus.svg)](https://www.npmjs.com/package/nestjs-azure-service-bus)
 [![license](https://img.shields.io/npm/l/nestjs-azure-service-bus.svg)](https://github.com/engcfraposo/nestjs-azure-service-bus/blob/08d728f7e13b1efc51bd05c34e7d550b4cef23fb/LICENSE)
-[![coverage](https://img.shields.io/badge/Coverage-100%25-brightgreen.svg)](https://github.com/engcfraposo/nestjs-azure-service-bus/blob/8e7abef3ab8c7df28c9ad9a8483ae7f52a4233fb/README.md) | 100% (39/39) | 83.33% (10/12) | 100% (15/15) |
+[![coverage](https://img.shields.io/badge/Coverage-100%25-brightgreen.svg)](https://github.com/engcfraposo/nestjs-azure-service-bus/blob/8e7abef3ab8c7df28c9ad9a8483ae7f52a4233fb/README.md)
 
 A dynamic module for NestJS that provides integration with Azure Service Bus.
 
@@ -18,7 +18,7 @@ The NestJS Azure Service Bus package allows you to easily integrate Azure Servic
 
 ## Usage
 
-### Importing the module
+### AzureServiceBusModule - Importing the module
 
 To use the Azure Service Bus module, import it into your NestJS application's root module:
 
@@ -38,7 +38,7 @@ export class AppModule {}
 
 Replace `<your-connection-string>` with your Azure Service Bus connection string.
 
-### Injecting Senders and Receivers
+### AzureServiceBusModule - Injecting Senders and Receivers
 
 You can use the `Sender` and `Receiver` decorators provided by the module to inject Azure Service Bus senders and receivers into your classes:
 
@@ -52,14 +52,14 @@ export class MyService {
     @Sender('my-queue') private readonly sender: ServiceBusSender,
     @Receiver('my-queue') private readonly receiver: ServiceBusReceiver,
   ) {}
-  
+
   // Use the sender and receiver in your methods
 }
 ```
 
 Replace `'my-queue'` with the name of your Azure Service Bus queue.
 
-### Configuration Options
+### AzureServiceBusModule - Configuration Options
 
 The `forRoot` method of the `AzureServiceBusModule` accepts a configuration object with two possible options:
 
@@ -68,7 +68,7 @@ The `forRoot` method of the `AzureServiceBusModule` accepts a configuration obje
 
 You can provide either the `connectionString` or the `fullyQualifiedNamespace`, but not both.
 
-### Dynamic Module Options
+### AzureServiceBusModule - Dynamic Module Options
 
 The `forFeature` method of the `AzureServiceBusModule` allows you to configure senders and receivers dynamically. It accepts an options object with two properties:
 
@@ -155,6 +155,58 @@ export class QueueModule {}
 ```
 
 for another method the `ServiceBusReceiver` and `ServiceBusSender` see the [azure sdk](https://www.npmjs.com/package/@azure/service-bus)
+
+### AzureServiceBusAdminModule - Importing the module
+
+To use the Azure Service Bus Admin module, import it into your NestJS application's root module:
+
+```typescript
+import { Module } from '@nestjs/common';
+import { AzureServiceBusAdminModule } from 'nestjs-azure-service-bus';
+
+@Module({
+  imports: [
+    AzureServiceBusAdminModule.forRoot({
+      connectionString: '<your-connection-string>',
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+Replace `<your-connection-string>` with your Azure Service Bus connection string.
+
+### AzureServiceBusAdminModule - Injecting Admin decorator
+
+You can use the `Admin` decorator provided by the module to inject Azure Service Bus admin client into your classes:
+
+```typescript
+import { Injectable } from '@nestjs/common';
+import { Admin } from 'nestjs-azure-service-bus';
+
+@Injectable()
+export class MyService {
+  constructor(
+    @Admin() private readonly admin: ServiceBusAdministrationClient,
+  ) {}
+
+  async createQueue(queue: string){
+    return this.admin.createQueue(queue)
+  }
+  async createTopic(topic: string){
+    return this.admin.createTopic(topic)
+  }
+  async queueRuntimeProperties(queue: string){
+    return this.admin.getQueueRuntimeProperties(queue)
+  }
+  async deleteQueue(){
+    await this.admin.deleteQueue(queue)
+  }
+  //...
+}
+```
+
+for another method the `ServiceBusAdministrationClient` see the [azure sdk](https://www.npmjs.com/package/@azure/service-bus)
 
 ## Support
 
